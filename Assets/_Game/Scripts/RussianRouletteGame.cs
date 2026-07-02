@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
-/// Chứa logic cốt lõi của game Russian Roulette, tách biệt khỏi UI.
+/// Chứa logic cốt lõi của game Russian Roulette.
 /// </summary>
 public class RussianRouletteLogic
 {
@@ -20,21 +20,15 @@ public class RussianRouletteLogic
     public RussianRouletteLogic(int maxBullets, int bulletsLoaded)
     {
         this.maxBullets = Mathf.Max(1, maxBullets);
-        // Đảm bảo số đạn không vượt quá số lỗ
         this.bulletsLoaded = Mathf.Clamp(bulletsLoaded, 0, this.maxBullets);
-        
+
         SetupChamber();
     }
 
     private void SetupChamber()
     {
         chamber = new bool[maxBullets];
-        for (int i = 0; i < maxBullets; i++)
-        {
-            chamber[i] = false;
-        }
 
-        // Random vị trí các viên đạn trong ổ
         int bulletsPlaced = 0;
         while (bulletsPlaced < bulletsLoaded)
         {
@@ -46,42 +40,45 @@ public class RussianRouletteLogic
             }
         }
 
-        // Random vị trí bắt đầu của ổ đạn (Optional rule)
         currentChamberIndex = Random.Range(0, maxBullets);
     }
 
     /// <summary>
-    /// Thực hiện bóp cò.
+    /// true = trúng đạn
+    /// false = an toàn
     /// </summary>
-    /// <returns>Trả về true nếu trúng đạn (lose), false nếu safe.</returns>
     public bool PullTrigger()
     {
         bool hasBullet = chamber[currentChamberIndex];
-        
-        // Nếu an toàn thì ổ đạn chuyển sang slot tiếp theo
+
         if (!hasBullet)
         {
             currentChamberIndex = (currentChamberIndex + 1) % maxBullets;
         }
-        
+
         return hasBullet;
     }
 }
 
+public enum GameMode
+{
+    PassAndPlay,
+    VsBot
+}
+
 /// <summary>
-/// Script điều khiển giao diện UI và luồng game chính (Player vs Bot).
+/// UI + Gameplay
 /// </summary>
 public class RussianRouletteGame : MonoBehaviour
 {
     [Header("Setup UI")]
-    [Tooltip("Panel hiển thị khi chuẩn bị bắt đầu game")]
     public GameObject setupPanel;
     public TMP_InputField maxBulletsInput;
     public TMP_InputField bulletsLoadedInput;
+    public TMP_Dropdown modeDropdown;
     public Button startGameButton;
 
     [Header("Gameplay UI")]
-    [Tooltip("Panel hiển thị trong lúc chơi")]
     public GameObject gameplayPanel;
     public TextMeshProUGUI turnText;
     public TextMeshProUGUI statusText;
@@ -90,19 +87,43 @@ public class RussianRouletteGame : MonoBehaviour
     public Button restartButton;
 
     [Header("Settings")]
-    public float botDelaySeconds = 1.0f;
+    public float botDelaySeconds = 1f;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip bangClip;
+    public AudioClip reloadClip;
+    public ParticleSystem muzzleFx;
 
     private RussianRouletteLogic gameLogic;
+
+    private GameMode currentMode;
+
     private bool isPlayerTurn = true;
     private bool gameOver = false;
 
+    private int turnCount;
+    private int maxTurns;
+
     private void Start()
     {
-        // Gán giá trị mặc định cho input
+        Vibration.Init();
+        
         maxBulletsInput.text = "6";
         bulletsLoadedInput.text = "1";
 
-        // Gán sự kiện cho các nút
+        if (modeDropdown != null)
+        {
+            modeDropdown.ClearOptions();
+            modeDropdown.AddOptions(new System.Collections.Generic.List<string>()
+            {
+                "Pass & Play",
+                "VS Bot"
+            });
+
+            modeDropdown.value = 0;
+        }
+
         startGameButton.onClick.AddListener(OnStartGameClicked);
         pullTriggerButton.onClick.AddListener(OnPullTriggerClicked);
         restartButton.onClick.AddListener(ShowSetup);
@@ -110,30 +131,23 @@ public class RussianRouletteGame : MonoBehaviour
         ShowSetup();
     }
 
-    /// <summary>
-    /// Hiển thị màn hình setup trước khi chơi
-    /// </summary>
     private void ShowSetup()
     {
         setupPanel.SetActive(true);
         gameplayPanel.SetActive(false);
+
         gameOver = false;
-        StopAllCoroutines(); // Dừng tất cả hành động của bot nếu đang chạy
+        StopAllCoroutines();
     }
 
-    /// <summary>
-    /// Bắt đầu game với các thông số từ giao diện
-    /// </summary>
     private void OnStartGameClicked()
     {
-        // Validate input cho Max Bullets
         if (!int.TryParse(maxBulletsInput.text, out int maxBullets) || maxBullets <= 0)
         {
             maxBullets = 6;
             maxBulletsInput.text = "6";
         }
 
-        // Validate input cho Bullets Loaded
         if (!int.TryParse(bulletsLoadedInput.text, out int bulletsLoaded) || bulletsLoaded < 0)
         {
             bulletsLoaded = 1;
@@ -146,16 +160,21 @@ public class RussianRouletteGame : MonoBehaviour
             bulletsLoadedInput.text = bulletsLoaded.ToString();
         }
 
-        // Khởi tạo logic game
         gameLogic = new RussianRouletteLogic(maxBullets, bulletsLoaded);
 
-        // Chuyển UI sang màn chơi
+        currentMode = (GameMode)modeDropdown.value;
+
         setupPanel.SetActive(false);
         gameplayPanel.SetActive(true);
-        
+
         isPlayerTurn = true;
         gameOver = false;
-        resultText.text = "Trò chơi bắt đầu!";
+
+        turnCount = 1;
+        maxTurns = maxBullets;
+
+        resultText.text = "Game Started!";
+
         pullTriggerButton.interactable = true;
         restartButton.gameObject.SetActive(false);
 
@@ -165,89 +184,132 @@ public class RussianRouletteGame : MonoBehaviour
 
     private void UpdateStatusText()
     {
-        statusText.text = $"Chamber Size: {gameLogic.MaxBullets} | Bullets Loaded: {gameLogic.BulletsLoaded}\n" +
-                          $"Current Slot: {gameLogic.CurrentChamberIndex + 1}/{gameLogic.MaxBullets}";
+        statusText.text =
+            $"Chamber Size: {gameLogic.MaxBullets} | Bullets Loaded: {gameLogic.BulletsLoaded}\n" +
+            $"Current Slot: {gameLogic.CurrentChamberIndex + 1}/{gameLogic.MaxBullets}";
     }
 
     private void UpdateTurnUI()
     {
-        if (gameOver) return;
+        if (gameOver)
+            return;
 
-        if (isPlayerTurn)
+        if (currentMode == GameMode.VsBot)
         {
-            turnText.text = "Turn: <color=green>Player</color>";
-            pullTriggerButton.interactable = true;
+            if (isPlayerTurn)
+            {
+                turnText.text = "Turn : <color=green>Player</color>";
+                pullTriggerButton.interactable = true;
+            }
+            else
+            {
+                turnText.text = "Turn : <color=red>Bot</color>";
+                pullTriggerButton.interactable = false;
+                StartCoroutine(BotTurnRoutine());
+            }
         }
         else
         {
-            turnText.text = "Turn: <color=red>Bot</color>";
-            pullTriggerButton.interactable = false; // Ngăn user bấm nút khi tới lượt bot
-            StartCoroutine(BotTurnRoutine());
+            turnText.text = $"Turn {turnCount}/{maxTurns}";
+            pullTriggerButton.interactable = true;
         }
     }
 
     private void OnPullTriggerClicked()
     {
-        if (isPlayerTurn && !gameOver)
-        {
-            ExecuteTurn();
-        }
-    }
+        if (gameOver)
+            return;
 
-    /// <summary>
-    /// Xử lý hành động bóp cò chung cho cả Player và Bot
-    /// </summary>
-    private void ExecuteTurn()
-    {
-        if (gameOver) return;
-
-        pullTriggerButton.interactable = false; // Vô hiệu hóa nút để tránh spam
-        
-        bool isHit = gameLogic.PullTrigger();
-        
-        if (isHit)
+        if (currentMode == GameMode.VsBot)
         {
-            // Nếu có đạn -> Thua
-            gameOver = true;
             if (isPlayerTurn)
-            {
-                resultText.text = "<b><color=red>Bang... Player lose!</color></b>";
-            }
-            else
-            {
-                resultText.text = "<b><color=green>Bang... Bot lose! Player won!</color></b>";
-            }
-            
-            turnText.text = "Game Over";
-            UpdateStatusText(); // Cập nhật lại slot hiện tại để biết slot có đạn
-            restartButton.gameObject.SetActive(true);
+                ExecuteTurn();
         }
         else
         {
-            // Không có đạn -> An toàn, qua lượt
-            if (isPlayerTurn)
-                resultText.text = "Player: Click... safe";
-            else
-                resultText.text = "Bot: Click... safe";
-            
-            UpdateStatusText();
-
-            // Đổi lượt
-            isPlayerTurn = !isPlayerTurn;
-            UpdateTurnUI();
+            ExecuteTurn();
         }
     }
 
-    /// <summary>
-    /// Coroutine xử lý lượt đi tự động của Bot sau một khoảng delay
-    /// </summary>
+    private void ExecuteTurn()
+    {
+        if (gameOver)
+            return;
+
+        pullTriggerButton.interactable = false;
+
+        bool hit = gameLogic.PullTrigger();
+
+        if (hit)
+        {
+            gameOver = true;
+
+            if (currentMode == GameMode.VsBot)
+            {
+                if (isPlayerTurn)
+                {
+                    resultText.text = "<color=red><b>BANG!\nPlayer Lose!</b></color>";
+                }
+                else
+                {
+                    resultText.text = "<color=green><b>BANG!\nBot Lose!\nPlayer Wins!</b></color>";
+                }
+            }
+            else
+            {
+                resultText.text =
+                    $"<color=red><b>BANG!</b></color>\n\nTurn {turnCount} đã trúng đạn!";
+            }
+
+            if (bangClip != null)
+                audioSource.PlayOneShot(bangClip);
+
+            if(muzzleFx != null) muzzleFx.Play();
+            
+            Vibration.VibratePop();
+            
+            turnText.text = "Game Over";
+
+            UpdateStatusText();
+
+            restartButton.gameObject.SetActive(true);
+
+            return;
+        }
+
+        // SAFE
+        if (reloadClip != null)
+            audioSource.PlayOneShot(reloadClip);
+        
+        Vibration.VibratePeek();
+
+        if (currentMode == GameMode.VsBot)
+        {
+            resultText.text = isPlayerTurn
+                ? "Player : Click... Safe"
+                : "Bot : Click... Safe";
+
+            isPlayerTurn = !isPlayerTurn;
+        }
+        else
+        {
+            resultText.text = "SAFE!\nNext Turn";
+
+            turnCount++;
+
+            if (turnCount > maxTurns)
+                turnCount = maxTurns;
+        }
+
+        UpdateStatusText();
+        UpdateTurnUI();
+    }
+
     private IEnumerator BotTurnRoutine()
     {
         yield return new WaitForSeconds(botDelaySeconds);
-        
+
         if (!gameOver)
-        {
             ExecuteTurn();
-        }
     }
 }
