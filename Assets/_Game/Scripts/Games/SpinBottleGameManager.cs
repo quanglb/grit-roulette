@@ -38,8 +38,10 @@ public class SpinBottleGameManager : BaseGameManager
 
         if (pointerArrow != null)
         {
-            pointerArrow.gameObject.SetActive(false);
+            pointerArrow.gameObject.SetActive(true);
             pointerArrow.localScale = Vector3.one;
+            float initialAngle = bottleTransform != null ? bottleTransform.eulerAngles.z + 90f : 90f;
+            pointerArrow.rotation = Quaternion.Euler(0, 0, initialAngle);
         }
 
         // Setup các Text hiển thị tên người chơi xoay tròn
@@ -55,12 +57,13 @@ public class SpinBottleGameManager : BaseGameManager
                 textComp.text = players[i];
                 textComp.alignment = TextAlignmentOptions.Center;
                 textComp.color = Color.white; // Chữ màu trắng dễ nhìn
-                textComp.fontSize = 24;
+                textComp.fontSize = playerCount > 12 ? 14 : (playerCount > 8 ? 18 : 24);
 
-                // Tính toán vị trí theo vòng tròn bán kính 160 units
+                // Tính toán vị trí theo vòng tròn bán kính phù hợp với số lượng người chơi
+                float radius = playerCount > 8 ? 175f : 160f;
                 float angle = i * Mathf.PI * 2f / playerCount;
                 var rect = txtObj.GetComponent<RectTransform>();
-                rect.anchoredPosition = new Vector2(Mathf.Cos(angle) * 160f, Mathf.Sin(angle) * 160f);
+                rect.anchoredPosition = new Vector2(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius);
             }
         }
 
@@ -118,8 +121,10 @@ public class SpinBottleGameManager : BaseGameManager
         float currentAngle = bottleTransform != null ? bottleTransform.eulerAngles.z : 0f;
         float angleStep = 360f / playerCount;
         
-        // Chuyển đổi góc từ 0-360 độ sang Index người chơi tương ứng
-        int selectedIndex = Mathf.RoundToInt(currentAngle / angleStep) % playerCount;
+        // Chuyển đổi góc từ 0-360 độ sang Index người chơi tương ứng, cộng thêm 90 độ vì mặc định đầu chai hướng lên trên (90 độ)
+        float bottleMouthAngle = (currentAngle + 90f) % 360f;
+        if (bottleMouthAngle < 0f) bottleMouthAngle += 360f;
+        int selectedIndex = Mathf.RoundToInt(bottleMouthAngle / angleStep) % playerCount;
         string selectedPlayer = players[selectedIndex];
         string selectedChallenge = challenges[Random.Range(0, challenges.Length)];
 

@@ -446,7 +446,8 @@ public class GameSceneSetupEditor : EditorWindow
         
         var ui = SetupCommonUI("Bomb Pass");
         
-        List<string> options = new List<string> { "2 Players", "3 Players", "4 Players", "5 Players", "6 Players", "7 Players", "8 Players" };
+        List<string> options = new List<string>();
+        for (int i = 2; i <= 18; i++) options.Add($"{i} Players");
         var playersDd = CreateDropdown(ui.setupPanel, "PlayerCountDropdown", options, new Vector2(0, 20), "Player Count:");
         
         GameObject bombObj = new GameObject("BombImage");
@@ -479,7 +480,8 @@ public class GameSceneSetupEditor : EditorWindow
         
         var ui = SetupCommonUI("Lucky Number");
         
-        List<string> options = new List<string> { "3 Players", "4 Players", "5 Players", "6 Players" };
+        List<string> options = new List<string>();
+        for (int i = 3; i <= 18; i++) options.Add($"{i} Players");
         var playersDd = CreateDropdown(ui.setupPanel, "PlayerCountDropdown", options, new Vector2(-200, 20), "Player Count:");
         
         var minInput = CreateInputField(ui.setupPanel, "MinRangeInput", "1", new Vector2(0, 20), "Min Range:");
@@ -512,7 +514,8 @@ public class GameSceneSetupEditor : EditorWindow
         
         var ui = SetupCommonUI("Spin Bottle");
         
-        List<string> options = new List<string> { "2 Players", "3 Players", "4 Players", "5 Players", "6 Players", "7 Players", "8 Players" };
+        List<string> options = new List<string>();
+        for (int i = 2; i <= 18; i++) options.Add($"{i} Players");
         var playersDd = CreateDropdown(ui.setupPanel, "PlayerCountDropdown", options, new Vector2(0, 20), "Player Count:");
 
         GameObject containerObj = new GameObject("PlayersContainer");
@@ -614,7 +617,8 @@ public class GameSceneSetupEditor : EditorWindow
         
         var ui = SetupCommonUI("Hot Potato");
         
-        List<string> options = new List<string> { "2 Players", "3 Players", "4 Players", "5 Players", "6 Players", "7 Players", "8 Players" };
+        List<string> options = new List<string>();
+        for (int i = 2; i <= 18; i++) options.Add($"{i} Players");
         var playersDd = CreateDropdown(ui.setupPanel, "PlayerCountDropdown", options, new Vector2(0, 20), "Player Count:");
 
         GameObject potatoObj = new GameObject("PotatoImage");
@@ -687,7 +691,8 @@ public class GameSceneSetupEditor : EditorWindow
         
         var ui = SetupCommonUI("Dice Battle");
         
-        List<string> options = new List<string> { "2 Players", "3 Players", "4 Players", "5 Players", "6 Players", "7 Players", "8 Players" };
+        List<string> options = new List<string>();
+        for (int i = 2; i <= 18; i++) options.Add($"{i} Players");
         var playersDd = CreateDropdown(ui.setupPanel, "PlayerCountDropdown", options, new Vector2(0, 20), "Player Count:");
 
         GameObject resObj = new GameObject("DiceResultsText");
@@ -723,18 +728,19 @@ public class GameSceneSetupEditor : EditorWindow
         
         var ui = SetupCommonUI("Secret Vote");
         
-        List<string> options = new List<string> { "3 Players", "4 Players", "5 Players", "6 Players", "7 Players", "8 Players" };
+        List<string> options = new List<string>();
+        for (int i = 3; i <= 18; i++) options.Add($"{i} Players");
         var playersDd = CreateDropdown(ui.setupPanel, "PlayerCountDropdown", options, new Vector2(0, 20), "Player Count:");
 
         GameObject containerObj = new GameObject("VotingButtonsContainer");
         containerObj.transform.SetParent(ui.gameplayPanel.transform, false);
         GridLayoutGroup grid = containerObj.AddComponent<GridLayoutGroup>();
-        grid.cellSize = new Vector2(180, 50);
-        grid.spacing = new Vector2(20, 20);
+        grid.cellSize = new Vector2(110, 35);
+        grid.spacing = new Vector2(10, 10);
         grid.childAlignment = TextAnchor.MiddleCenter;
         RectTransform containerRect = containerObj.GetComponent<RectTransform>();
         containerRect.anchoredPosition = new Vector2(0, 50);
-        containerRect.sizeDelta = new Vector2(400, 240);
+        containerRect.sizeDelta = new Vector2(400, 280);
 
         var showBtn = CreateButton(ui.gameplayPanel, "ShowVoteListButton", "Xem Danh Sách Vote", new Vector2(0, -110), Color.blue);
 

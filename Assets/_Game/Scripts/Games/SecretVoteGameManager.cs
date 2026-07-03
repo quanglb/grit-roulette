@@ -97,6 +97,7 @@ public class SecretVoteGameManager : BaseGameManager
                 txt.text = targetPlayer;
                 txt.color = Color.black;
                 txt.alignment = TextAlignmentOptions.Center;
+                txt.fontSize = playerCount > 12 ? 12 : (playerCount > 8 ? 14 : 18);
                 
                 RectTransform txtRect = txtObj.GetComponent<RectTransform>();
                 txtRect.anchorMin = Vector2.zero;
