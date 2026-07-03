@@ -15,11 +15,17 @@ public class HotPotatoGameManager : BaseGameManager
     private int currentPlayerIndex = 0;
     private float potatoTimer = 10f;
     private bool isRunning = false;
+    private AudioSource sizzleAudioSource;
 
     protected override void Start()
     {
         base.Start();
         if (nextButton != null) nextButton.onClick.AddListener(PassPotato);
+    }
+
+    protected override string GetBGMName()
+    {
+        return "BGM_Tense_Loop";
     }
 
     protected override void OnInitGame()
@@ -36,6 +42,13 @@ public class HotPotatoGameManager : BaseGameManager
             nextButton.gameObject.SetActive(true);
             nextButton.interactable = true;
         }
+
+        if (sizzleAudioSource != null)
+        {
+            AudioManager.Instance.StopSFX(sizzleAudioSource);
+        }
+        sizzleAudioSource = AudioManager.Instance.PlaySFX("SFX_Sizzle", true);
+
         UpdateTurnUI();
     }
 
@@ -75,6 +88,10 @@ public class HotPotatoGameManager : BaseGameManager
     {
         if (currentState != GameState.Playing) return;
         currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+
+        // Phát tiếng chuyền lượt
+        AudioManager.Instance.PlaySFX("SFX_Pass");
+
         UpdateTurnUI();
     }
 
@@ -90,6 +107,17 @@ public class HotPotatoGameManager : BaseGameManager
     {
         isRunning = false;
         if (nextButton != null) nextButton.interactable = false;
+
+        // Dừng tiếng xèo xèo
+        if (sizzleAudioSource != null)
+        {
+            AudioManager.Instance.StopSFX(sizzleAudioSource);
+        }
+
+        // Phát tiếng nổ phỏng và kèn thua cuộc
+        AudioManager.Instance.PlaySFX("SFX_HotBurn");
+        AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
+
         EndGame(players[currentPlayerIndex]);
     }
 }

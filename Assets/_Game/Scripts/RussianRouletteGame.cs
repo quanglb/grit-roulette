@@ -108,6 +108,9 @@ public class RussianRouletteGame : MonoBehaviour
 
     private void Start()
     {
+        // Phát nhạc nền Russian Roulette
+        AudioManager.Instance.PlayBGM("BGM_RussianRoulette");
+
         Vibration.Init();
         
         maxBulletsInput.text = "6";
@@ -125,11 +128,18 @@ public class RussianRouletteGame : MonoBehaviour
             modeDropdown.value = 0;
         }
 
+        startGameButton.onClick.AddListener(() => AudioManager.Instance.PlaySFX("SFX_Click"));
         startGameButton.onClick.AddListener(OnStartGameClicked);
+
+        pullTriggerButton.onClick.AddListener(() => AudioManager.Instance.PlaySFX("SFX_Click"));
         pullTriggerButton.onClick.AddListener(OnPullTriggerClicked);
+
+        restartButton.onClick.AddListener(() => AudioManager.Instance.PlaySFX("SFX_Click"));
         restartButton.onClick.AddListener(ShowSetup);
+
         if (backToMenuButton != null)
         {
+            backToMenuButton.onClick.AddListener(() => AudioManager.Instance.PlaySFX("SFX_Click"));
             backToMenuButton.onClick.AddListener(() => UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenuScene"));
         }
 
@@ -179,6 +189,7 @@ public class RussianRouletteGame : MonoBehaviour
         maxTurns = maxBullets;
 
         resultText.text = "Game Started!";
+        AudioManager.Instance.PlaySFX("SFX_GunReload");
 
         pullTriggerButton.interactable = true;
         restartButton.gameObject.SetActive(false);
@@ -266,8 +277,7 @@ public class RussianRouletteGame : MonoBehaviour
                     $"<color=red><b>BANG!</b></color>\n\nTurn {turnCount} đã trúng đạn!";
             }
 
-            if (bangClip != null)
-                audioSource.PlayOneShot(bangClip);
+            AudioManager.Instance.PlaySFX("SFX_Pistol");
 
             if(muzzleFx != null) muzzleFx.Play();
             
@@ -283,8 +293,7 @@ public class RussianRouletteGame : MonoBehaviour
         }
 
         // SAFE
-        if (reloadClip != null)
-            audioSource.PlayOneShot(reloadClip);
+        AudioManager.Instance.PlaySFX("SFX_GunClick");
         
         Vibration.VibratePeek();
 

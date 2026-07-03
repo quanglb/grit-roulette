@@ -96,6 +96,9 @@ public class LuckyNumberGameManager : BaseGameManager
             return;
         }
 
+        // Phát sfx nhập số thành công
+        AudioManager.Instance.PlaySFX("SFX_Submit");
+
         playerChoices[players[currentPlayerIndex]] = choice;
         currentPlayerIndex++;
 
@@ -114,6 +117,8 @@ public class LuckyNumberGameManager : BaseGameManager
 
     public void RevealResult()
     {
+        // Phát tiếng trống dồn dập
+        AudioManager.Instance.PlaySFX("SFX_RevealRoll");
         int maxDiff = -1;
         List<string> losers = new List<string>();
 
@@ -138,6 +143,9 @@ public class LuckyNumberGameManager : BaseGameManager
 
         if (instructionText != null) instructionText.text = detailText;
         if (revealButton != null) revealButton.gameObject.SetActive(false);
+
+        // Phát tiếng thua cuộc
+        AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
 
         EndGame(string.Join(", ", losers));
     }

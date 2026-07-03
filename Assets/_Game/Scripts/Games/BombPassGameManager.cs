@@ -15,11 +15,17 @@ public class BombPassGameManager : BaseGameManager
     private int currentPlayerIndex = 0;
     private float bombTimer = 10f;
     private bool isRunning = false;
+    private AudioSource tickAudioSource;
 
     protected override void Start()
     {
         base.Start();
         if (passButton != null) passButton.onClick.AddListener(PassBomb);
+    }
+
+    protected override string GetBGMName()
+    {
+        return "BGM_Tense_Loop";
     }
 
     protected override void OnInitGame()
@@ -38,6 +44,13 @@ public class BombPassGameManager : BaseGameManager
             passButton.gameObject.SetActive(true);
             passButton.interactable = true;
         }
+
+        if (tickAudioSource != null)
+        {
+            AudioManager.Instance.StopSFX(tickAudioSource);
+        }
+        tickAudioSource = AudioManager.Instance.PlaySFX("SFX_BombTick", true);
+
         UpdateTurnUI();
     }
 
@@ -78,6 +91,10 @@ public class BombPassGameManager : BaseGameManager
     {
         if (currentState != GameState.Playing) return;
         currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+        
+        // Phát tiếng chuyền bom
+        AudioManager.Instance.PlaySFX("SFX_Pass");
+        
         UpdateTurnUI();
     }
 
@@ -93,6 +110,17 @@ public class BombPassGameManager : BaseGameManager
     {
         isRunning = false;
         if (passButton != null) passButton.interactable = false;
+
+        // Dừng tiếng tíc tắc
+        if (tickAudioSource != null)
+        {
+            AudioManager.Instance.StopSFX(tickAudioSource);
+        }
+
+        // Phát tiếng nổ và tiếng thua cuộc
+        AudioManager.Instance.PlaySFX("SFX_Explosion");
+        AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
+
         EndGame(players[currentPlayerIndex]);
     }
 }

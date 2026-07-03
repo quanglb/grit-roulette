@@ -157,6 +157,9 @@ public class SecretVoteGameManager : BaseGameManager
 
     private void CastVote(string targetPlayer)
     {
+        // Phát sfx vote
+        AudioManager.Instance.PlaySFX("SFX_VoteCast");
+
         votes[targetPlayer]++;
         votingPlayerIndex++;
 
@@ -195,6 +198,10 @@ public class SecretVoteGameManager : BaseGameManager
         }
 
         if (instructionText != null) instructionText.text = resultStr;
+
+        // Phát tiếng thua cuộc
+        AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
+
         EndGame(string.Join(", ", losers));
     }
 }

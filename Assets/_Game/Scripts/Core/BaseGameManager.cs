@@ -32,10 +32,23 @@ public abstract class BaseGameManager : MonoBehaviour
             sceneLoader = loaderObj.AddComponent<SceneLoader>();
         }
 
-        if (startButton != null) startButton.onClick.AddListener(StartGame);
-        if (restartButton != null) restartButton.onClick.AddListener(RestartGame);
-        if (backToMenuButton != null) backToMenuButton.onClick.AddListener(BackToMenu);
+        if (startButton != null)
+        {
+            startButton.onClick.AddListener(PlayClickSound);
+            startButton.onClick.AddListener(StartGame);
+        }
+        if (restartButton != null)
+        {
+            restartButton.onClick.AddListener(PlayClickSound);
+            restartButton.onClick.AddListener(RestartGame);
+        }
+        if (backToMenuButton != null)
+        {
+            backToMenuButton.onClick.AddListener(PlayClickSound);
+            backToMenuButton.onClick.AddListener(BackToMenu);
+        }
 
+        AudioManager.Instance.PlayBGM(GetBGMName());
         SetupGame();
     }
 
@@ -90,5 +103,15 @@ public abstract class BaseGameManager : MonoBehaviour
     protected virtual bool ValidateInputs()
     {
         return true;
+    }
+
+    protected virtual string GetBGMName()
+    {
+        return "BGM_Casual_Loop";
+    }
+
+    protected void PlayClickSound()
+    {
+        AudioManager.Instance.PlaySFX("SFX_Click");
     }
 }

@@ -37,6 +37,11 @@ public class ColorTrapGameManager : BaseGameManager
         }
     }
 
+    protected override string GetBGMName()
+    {
+        return "BGM_Puzzle_Loop";
+    }
+
     protected override void OnInitGame()
     {
         score = 0;
@@ -54,6 +59,7 @@ public class ColorTrapGameManager : BaseGameManager
         if (score >= 5)
         {
             if (instructionText != null) instructionText.text = $"{playerName} đã vượt qua thử thách Bẫy Màu Sắc an toàn!";
+            AudioManager.Instance.PlaySFX("SFX_WinFanfare");
             EndGame("Không có (Chiến thắng)");
             return;
         }
@@ -87,6 +93,8 @@ public class ColorTrapGameManager : BaseGameManager
 
         if (timeRemaining <= 0)
         {
+            AudioManager.Instance.PlaySFX("SFX_Wrong");
+            AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
             EndGame(playerName);
         }
     }
@@ -100,10 +108,13 @@ public class ColorTrapGameManager : BaseGameManager
         if (buttonIndex == correctIndex)
         {
             score++;
+            AudioManager.Instance.PlaySFX("SFX_Correct");
             NextQuestion();
         }
         else
         {
+            AudioManager.Instance.PlaySFX("SFX_Wrong");
+            AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
             EndGame(playerName);
         }
     }

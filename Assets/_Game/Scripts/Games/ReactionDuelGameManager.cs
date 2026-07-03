@@ -24,6 +24,11 @@ public class ReactionDuelGameManager : BaseGameManager
         if (p2Button != null) p2Button.onClick.AddListener(() => PlayerTap(2));
     }
 
+    protected override string GetBGMName()
+    {
+        return "BGM_Duel_Loop";
+    }
+
     protected override void OnInitGame()
     {
         if (p1Button != null) p1Button.interactable = true;
@@ -55,6 +60,9 @@ public class ReactionDuelGameManager : BaseGameManager
             isSignalActive = true;
             if (signalImage != null) signalImage.color = Color.green;
             if (instructionText != null) instructionText.text = "TAP NOW!!!";
+            
+            // Phát còi báo hiệu tap ngay
+            AudioManager.Instance.PlaySFX("SFX_DuelSignal");
         }
     }
 
@@ -67,11 +75,20 @@ public class ReactionDuelGameManager : BaseGameManager
             // Bấm sớm khi chưa có tín hiệu: Thua ngay lập tức
             isWaitingForSignal = false;
             StopAllCoroutines();
+            
+            AudioManager.Instance.PlaySFX("SFX_Wrong");
+            AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
+            
             EndGame(playerNum == 1 ? p1Name : p2Name);
         }
         else if (isSignalActive)
         {
             isSignalActive = false;
+            
+            // Tát người đối diện và thua kèn
+            AudioManager.Instance.PlaySFX("SFX_Slap");
+            AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
+            
             // Người bấm trước thắng -> Người bấm sau/người còn lại thua
             EndGame(playerNum == 1 ? p2Name : p1Name);
         }

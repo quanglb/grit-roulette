@@ -31,6 +31,11 @@ public class MemoryChainGameManager : BaseGameManager
         }
     }
 
+    protected override string GetBGMName()
+    {
+        return "BGM_Puzzle_Loop";
+    }
+
     protected override void OnInitGame()
     {
         sequence.Clear();
@@ -48,6 +53,7 @@ public class MemoryChainGameManager : BaseGameManager
         if (sequence.Count >= 5)
         {
             if (instructionText != null) instructionText.text = $"{playerName} đã vượt qua 5 chuỗi nhớ thành công! Chiến thắng!";
+            AudioManager.Instance.PlaySFX("SFX_WinFanfare");
             EndGame("Không có (Chiến thắng)");
             return;
         }
@@ -81,11 +87,20 @@ public class MemoryChainGameManager : BaseGameManager
     {
         if (colorButtons != null && idx < colorButtons.Length && colorButtons[idx] != null && colorButtons[idx].image != null)
         {
+            // Phát nốt nhạc tương ứng
+            PlaySynthSound(idx);
+
             Color originalColor = colorButtons[idx].image.color;
             colorButtons[idx].image.color = Color.white; // Làm sáng nút
             yield return new WaitForSeconds(0.4f);
             colorButtons[idx].image.color = originalColor;
         }
+    }
+
+    private void PlaySynthSound(int idx)
+    {
+        string sfxName = idx == 0 ? "SFX_Synth_C" : (idx == 1 ? "SFX_Synth_E" : (idx == 2 ? "SFX_Synth_G" : "SFX_Synth_C2"));
+        AudioManager.Instance.PlaySFX(sfxName);
     }
 
     private void SetButtonsInteractable(bool active)
@@ -110,12 +125,15 @@ public class MemoryChainGameManager : BaseGameManager
             playerInputIndex++;
             if (playerInputIndex >= sequence.Count)
             {
-                // Hoàn thành chuỗi, sang round tiếp theo
+                // Hoàn thành chuỗi, phát nhạc thắng round và sang round tiếp theo
+                AudioManager.Instance.PlaySFX("SFX_RoundClear");
                 StartNewRound();
             }
         }
         else
         {
+            AudioManager.Instance.PlaySFX("SFX_Wrong");
+            AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
             EndGame(playerName);
         }
     }

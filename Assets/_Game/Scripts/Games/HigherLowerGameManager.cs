@@ -24,6 +24,11 @@ public class HigherLowerGameManager : BaseGameManager
         if (passButton != null) passButton.onClick.AddListener(PassTurn);
     }
 
+    protected override string GetBGMName()
+    {
+        return "BGM_Puzzle_Loop";
+    }
+
     protected override void OnInitGame()
     {
         currentNumber = Random.Range(1, 14);
@@ -60,6 +65,9 @@ public class HigherLowerGameManager : BaseGameManager
     {
         if (currentState != GameState.Playing) return;
 
+        // Lật bài
+        AudioManager.Instance.PlaySFX("SFX_CardFlip");
+
         // Sinh số ngẫu nhiên mới khác số hiện tại
         do
         {
@@ -70,18 +78,24 @@ public class HigherLowerGameManager : BaseGameManager
 
         if (isCorrect)
         {
+            AudioManager.Instance.PlaySFX("SFX_Correct");
             currentNumber = nextNumber;
             streak++;
             UpdateUI();
         }
         else
         {
+            AudioManager.Instance.PlaySFX("SFX_Wrong");
+            AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
             EndGame(playerName);
         }
     }
 
     public void PassTurn()
     {
+        // Phát tiếng chuyền lượt
+        AudioManager.Instance.PlaySFX("SFX_Pass");
+
         // Điểm danh sách an toàn, nạp số mới cho người kế tiếp
         streak = 0;
         currentNumber = Random.Range(1, 14);

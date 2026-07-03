@@ -58,6 +58,9 @@ public class DiceBattleGameManager : BaseGameManager
     {
         if (currentState != GameState.Playing) return;
 
+        // Phát tiếng đổ xúc xắc
+        AudioManager.Instance.PlaySFX("SFX_DiceRoll");
+
         int score = Random.Range(1, 7);
         playerScores[players[currentPlayerIndex]] = score;
         
@@ -100,6 +103,9 @@ public class DiceBattleGameManager : BaseGameManager
                 losers.Add(score.Key);
             }
         }
+
+        // Phát tiếng thua cuộc
+        AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
 
         EndGame(string.Join(", ", losers));
     }

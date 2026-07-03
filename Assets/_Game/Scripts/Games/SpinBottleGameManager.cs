@@ -142,6 +142,9 @@ public class SpinBottleGameManager : BaseGameManager
         if (spinButton != null) spinButton.interactable = false;
         if (pointerArrow != null) pointerArrow.gameObject.SetActive(false);
 
+        // Phát âm thanh chai xoay vòng lặp
+        AudioSource spinSfx = AudioManager.Instance.PlaySFX("SFX_BottleSpin", true);
+
         float spinTime = 10f; // Xoay liên tục đến lúc dừng (10s)
         float elapsed = 0f;
         float startSpeed = Random.Range(700f, 1100f);
@@ -160,6 +163,11 @@ public class SpinBottleGameManager : BaseGameManager
             currentSpeed = Mathf.Lerp(startSpeed, 0f, elapsed / spinTime);
             yield return null;
         }
+
+        // Dừng âm thanh chai xoay
+        AudioManager.Instance.StopSFX(spinSfx);
+        // Phát tiếng ding báo kết quả
+        AudioManager.Instance.PlaySFX("SFX_Ding");
 
         isSpinning = false;
 
@@ -198,6 +206,8 @@ public class SpinBottleGameManager : BaseGameManager
         }
         
         yield return new WaitForSeconds(3.5f);
+        // Phát nhạc thua cuộc
+        AudioManager.Instance.PlaySFX("SFX_LoseFanfare");
         EndGame(selectedPlayer);
     }
 
