@@ -85,6 +85,7 @@ public class RussianRouletteGame : MonoBehaviour
     public TextMeshProUGUI resultText;
     public Button pullTriggerButton;
     public Button restartButton;
+    public Button backToMenuButton;
 
     [Header("Settings")]
     public float botDelaySeconds = 1f;
@@ -127,6 +128,10 @@ public class RussianRouletteGame : MonoBehaviour
         startGameButton.onClick.AddListener(OnStartGameClicked);
         pullTriggerButton.onClick.AddListener(OnPullTriggerClicked);
         restartButton.onClick.AddListener(ShowSetup);
+        if (backToMenuButton != null)
+        {
+            backToMenuButton.onClick.AddListener(() => UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenuScene"));
+        }
 
         ShowSetup();
     }

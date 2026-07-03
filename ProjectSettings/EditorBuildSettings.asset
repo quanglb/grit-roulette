@@ -6,8 +6,41 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenuScene.unity
+    guid: 48fd0d0e7d38846709b9012f6e4a2551
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/BombPassScene.unity
+    guid: 6395a97116318423eaaf8d6182e589cb
+  - enabled: 1
+    path: Assets/Scenes/LuckyNumberScene.unity
+    guid: 998d71f5e55ec4931854c6850f60ab6c
+  - enabled: 1
+    path: Assets/Scenes/SpinBottleScene.unity
+    guid: 16b0cbc08dcd4432199a40ba9dfb0b05
+  - enabled: 1
+    path: Assets/Scenes/ReactionDuelScene.unity
+    guid: b380a69ba61a24956905a4be9eaa1bef
+  - enabled: 1
+    path: Assets/Scenes/HotPotatoScene.unity
+    guid: 0cb2dec32329245d8bdd7a49b1af2fa3
+  - enabled: 1
+    path: Assets/Scenes/HigherLowerScene.unity
+    guid: 5a99ee3934e8d4641bde4efed875a9a8
+  - enabled: 1
+    path: Assets/Scenes/DiceBattleScene.unity
+    guid: f5e2e95769b47421886235fd38477d65
+  - enabled: 1
+    path: Assets/Scenes/SecretVoteScene.unity
+    guid: e8000a0baaa5b41e7a448717d377dd01
+  - enabled: 1
+    path: Assets/Scenes/ColorTrapScene.unity
+    guid: e08f4c5b3452a436a92bf384ba17e903
+  - enabled: 1
+    path: Assets/Scenes/MemoryChainScene.unity
+    guid: 13e1775d169834586aea7c45cd702215
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

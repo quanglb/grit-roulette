@@ -1,0 +1,5 @@
+/Users/admin/Projects/2026/grit-roulette/.utmp/RelWithDebInfo/1o4x186d/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/admin/Projects/2026/grit-roulette/.utmp/RelWithDebInfo/1o4x186d/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/Users/admin/Projects/2026/grit-roulette/.utmp/RelWithDebInfo/1o4x186d/arm64-v8a/GameActivity/CMakeFiles/game.dir
+/Users/admin/Projects/2026/grit-roulette/.utmp/RelWithDebInfo/1o4x186d/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+/Users/admin/Projects/2026/grit-roulette/.utmp/RelWithDebInfo/1o4x186d/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
