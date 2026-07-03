@@ -44,7 +44,9 @@ public class BeautifyGameCanvas
         titleObj.transform.SetParent(canvasObj.transform, false);
         TextMeshProUGUI titleText = titleObj.AddComponent<TextMeshProUGUI>();
         titleText.text = "Game Title";
-        titleText.fontSize = 55;
+        titleText.enableAutoSizing = true;
+        titleText.fontSizeMin = 24;
+        titleText.fontSizeMax = 55;
         titleText.fontStyle = FontStyles.Bold;
         titleText.color = neonCyan;
         titleText.alignment = TextAlignmentOptions.Center;
@@ -59,14 +61,16 @@ public class BeautifyGameCanvas
         instObj.transform.SetParent(canvasObj.transform, false);
         TextMeshProUGUI instText = instObj.AddComponent<TextMeshProUGUI>();
         instText.text = "Instruction goes here...";
-        instText.fontSize = 32;
+        instText.enableAutoSizing = true;
+        instText.fontSizeMin = 14;
+        instText.fontSizeMax = 32;
         instText.color = textWhite;
         instText.alignment = TextAlignmentOptions.Center;
         RectTransform instRect = instObj.GetComponent<RectTransform>();
         instRect.anchorMin = new Vector2(0.5f, 1f);
         instRect.anchorMax = new Vector2(0.5f, 1f);
-        instRect.anchoredPosition = new Vector2(0, -180);
-        instRect.sizeDelta = new Vector2(1200, 80);
+        instRect.anchoredPosition = new Vector2(0, -200);
+        instRect.sizeDelta = new Vector2(1200, 120);
 
         System.Func<string, GameObject> createPanel = (name) => {
             GameObject panel = new GameObject(name);
@@ -127,7 +131,9 @@ public class BeautifyGameCanvas
         loserObj.transform.SetParent(resultPanel.transform, false);
         TextMeshProUGUI loserText = loserObj.AddComponent<TextMeshProUGUI>();
         loserText.text = "Loser: Player — Drink!";
-        loserText.fontSize = 45;
+        loserText.enableAutoSizing = true;
+        loserText.fontSizeMin = 18;
+        loserText.fontSizeMax = 45;
         loserText.fontStyle = FontStyles.Bold;
         loserText.color = neonCyan; // Đổi sang màu xanh neon
         loserText.alignment = TextAlignmentOptions.Center;
