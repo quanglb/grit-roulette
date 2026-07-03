@@ -1,39 +1,65 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
-    private SceneLoader sceneLoader;
+    // Reference to the SceneLoader component (assign via inspector or find at runtime)
+    public SceneLoader sceneLoader;
 
-    private void Start()
+    // Assign your UI Buttons in the inspector. The button name should exactly match the target scene name (e.g., "SpinBottleScene").
+    public Button buttonRusian;
+    public Button buttonBombPass;
+    public Button buttonLuckyNumber;
+    public Button buttonSpinBottle;
+    public Button buttonReactionDuel;
+    public Button buttonHotPotato;
+    public Button buttonHigherLower;
+    public Button buttonDiceBattle;
+    public Button buttonSecretVote;
+    public Button buttonColorTrap;
+    public Button buttonMemoryChain;
+
+    private void Awake()
     {
-        // Phát nhạc nền main menu
-        AudioManager.Instance.PlayBGM("BGM_MainMenu");
-
-        sceneLoader = FindObjectOfType<SceneLoader>();
+        // Ensure we have a SceneLoader instance in the scene.
         if (sceneLoader == null)
         {
             GameObject loaderObj = new GameObject("SceneLoader");
             sceneLoader = loaderObj.AddComponent<SceneLoader>();
         }
+        
+        Vibration.Init();
+    }
 
-        // Tìm và gán sự kiện cho các Button theo tên Scene tương ứng
-        Button[] buttons = FindObjectsOfType<Button>();
-        foreach (var btn in buttons)
+    private void Start()
+    {
+        // Play background music for the main menu.
+        AudioManager.Instance.PlayBGM("BGM_MainMenu");
+
+        // Register each button individually
+        RegisterButton(buttonRusian, "SampleScene");
+        RegisterButton(buttonBombPass, "BombPassScene");
+        RegisterButton(buttonLuckyNumber, "LuckyNumberScene");
+        RegisterButton(buttonSpinBottle, "SpinBottleScene");
+        RegisterButton(buttonReactionDuel, "ReactionDuelScene");
+        RegisterButton(buttonHotPotato, "HotPotatoScene");
+        RegisterButton(buttonHigherLower, "HigherLowerScene");
+        RegisterButton(buttonDiceBattle, "DiceBattleScene");
+        RegisterButton(buttonSecretVote, "SecretVoteScene");
+        RegisterButton(buttonColorTrap, "ColorTrapScene");
+        RegisterButton(buttonMemoryChain, "MemoryChainScene");
+    }
+
+    private void RegisterButton(Button btn, string sceneName)
+    {
+        if (btn == null) return;
+
+        btn.onClick.AddListener(() =>
         {
-            // Phát sfx click cho mọi button
-            btn.onClick.AddListener(() => {
-                AudioManager.Instance.PlaySFX("SFX_Click");
-            });
-
-            string btnName = btn.gameObject.name;
-            // Nếu tên Button trùng với tên Scene, tự động gán sự kiện LoadScene
-            if (btnName.EndsWith("Scene"))
-            {
-                btn.onClick.AddListener(() => {
-                    sceneLoader.LoadScene(btnName);
-                });
-            }
-        }
+            AudioManager.Instance.PlaySFX("SFX_Click");
+            Vibration.VibratePop();
+            sceneLoader.LoadScene(sceneName);
+        });
     }
 }

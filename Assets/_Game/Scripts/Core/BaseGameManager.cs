@@ -21,17 +21,10 @@ public abstract class BaseGameManager : MonoBehaviour
     [SerializeField] protected Button backToMenuButton;
 
     protected GameState currentState;
-    protected SceneLoader sceneLoader;
+    protected SceneLoader sceneLoader =>SceneLoader.Instance;
 
     protected virtual void Start()
     {
-        sceneLoader = FindObjectOfType<SceneLoader>();
-        if (sceneLoader == null)
-        {
-            GameObject loaderObj = new GameObject("SceneLoader");
-            sceneLoader = loaderObj.AddComponent<SceneLoader>();
-        }
-
         if (startButton != null)
         {
             startButton.onClick.AddListener(PlayClickSound);
