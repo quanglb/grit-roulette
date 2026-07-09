@@ -85,7 +85,7 @@ public class BeautifyMainMenu
         titleObj.transform.SetParent(canvasObj.transform, false);
         TextMeshProUGUI titleText = titleObj.AddComponent<TextMeshProUGUI>();
         titleText.text = "DRINKING PARTY MINI GAMES";
-        titleText.fontSize = 60;
+        titleText.fontSize = 80;
         titleText.fontStyle = FontStyles.Bold;
         titleText.color = neonCyan; // Xanh neon
         titleText.alignment = TextAlignmentOptions.Center;
@@ -99,7 +99,7 @@ public class BeautifyMainMenu
         GameObject gridObj = new GameObject("ButtonsGrid");
         gridObj.transform.SetParent(canvasObj.transform, false);
         GridLayoutGroup grid = gridObj.AddComponent<GridLayoutGroup>();
-        grid.cellSize = new Vector2(320, 120);
+        grid.cellSize = new Vector2(380, 150);
         grid.spacing = new Vector2(30, 30);
         grid.constraint = GridLayoutGroup.Constraint.FixedRowCount;
         grid.constraintCount = 3;
@@ -144,7 +144,7 @@ public class BeautifyMainMenu
             txtObj.transform.SetParent(btnObj.transform, false);
             TextMeshProUGUI txt = txtObj.AddComponent<TextMeshProUGUI>();
             txt.text = gameNames[i];
-            txt.fontSize = 24;
+            txt.fontSize = 30;
             txt.fontStyle = FontStyles.Bold;
             txt.alignment = TextAlignmentOptions.Center;
             txt.color = textWhite; // Chữ trắng

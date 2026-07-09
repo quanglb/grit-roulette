@@ -45,6 +45,7 @@ public class BeautifyGameCanvas
         TextMeshProUGUI titleText = titleObj.AddComponent<TextMeshProUGUI>();
         titleText.text = "Game Title";
         titleText.enableAutoSizing = true;
+        titleText.fontSize = 80;
         titleText.fontSizeMin = 24;
         titleText.fontSizeMax = 55;
         titleText.fontStyle = FontStyles.Bold;
@@ -62,8 +63,8 @@ public class BeautifyGameCanvas
         TextMeshProUGUI instText = instObj.AddComponent<TextMeshProUGUI>();
         instText.text = "Instruction goes here...";
         instText.enableAutoSizing = true;
-        instText.fontSizeMin = 14;
-        instText.fontSizeMax = 32;
+        instText.fontSizeMin = 20; // Larger instruction text
+        instText.fontSizeMax = 48; // Larger instruction text max size
         instText.color = textWhite;
         instText.alignment = TextAlignmentOptions.Center;
         RectTransform instRect = instObj.GetComponent<RectTransform>();
@@ -103,7 +104,7 @@ public class BeautifyGameCanvas
         startRect.anchorMin = new Vector2(0.5f, 0f);
         startRect.anchorMax = new Vector2(0.5f, 0f);
         startRect.anchoredPosition = new Vector2(0, 50);
-        startRect.sizeDelta = new Vector2(250, 75);
+        startRect.sizeDelta = new Vector2(200, 60);
 
         GameObject startTxtObj = new GameObject("Text");
         startTxtObj.transform.SetParent(startBtnObj.transform, false);
@@ -161,7 +162,7 @@ public class BeautifyGameCanvas
         restartTxtObj.transform.SetParent(restartBtnObj.transform, false);
         TextMeshProUGUI restartTxt = restartTxtObj.AddComponent<TextMeshProUGUI>();
         restartTxt.text = "Restart";
-        restartTxt.fontSize = 24;
+        restartTxt.fontSize = 26;
         restartTxt.fontStyle = FontStyles.Bold;
         restartTxt.alignment = TextAlignmentOptions.Center;
         restartTxt.color = textWhite; // Chữ trắng
